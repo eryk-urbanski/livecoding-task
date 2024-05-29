@@ -27,6 +27,7 @@ if (app.Environment.IsDevelopment())
     });
 }
 
+app.MapGet("/availability/{date}", GetAvailability);
 var AppointmentItems = app.MapGroup("/appointmentitems");
 
 AppointmentItems.MapGet("/", GetAllAppointments);
@@ -50,6 +51,15 @@ static async Task<IResult> GetAppointment(int id, AppointmentDb db)
         is Appointment Appointment
             ? TypedResults.Ok(Appointment)
             : TypedResults.NotFound();
+}
+
+// GET Get Date Availability
+static async Task<IResult> GetAvailability(DateTime date, AppointmentDb db)
+{
+    return await db.Appointments.FindAsync(date)
+        is Appointment Appointment
+            ? TypedResults.Ok("Date Not Available")
+            : TypedResults.Ok("Date Available");
 }
 
 // POST Create New Appointment
